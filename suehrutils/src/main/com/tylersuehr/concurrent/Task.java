@@ -19,13 +19,13 @@ import java.util.concurrent.FutureTask;
  *
  * The mechanism that allows us to run/spawn new threads is {@link Executor}. We have
  * created a few executors that function differently accordingly:
- *      1. {@link SingleExecutor} spawns one new thread to run one single task
- *      1. {@link SerialExecutor} spawns one new thread and runs all tasks on it
- *      2. {@link ParallelExecutor} spawns a new thread to run each task in parallel
+ *      1. { SingleExecutor} spawns one new thread to run one single task
+ *      1. { SerialExecutor} spawns one new thread and runs all tasks on it
+ *      2. { ParallelExecutor} spawns a new thread to run each task in parallel
  *
- * The default executor used by this class is {@link SingleExecutor}.
+ * The default executor used by this class is { SingleExecutor}.
  *
- * You can also register an observer, {@link ITaskObserver}, that will allow you
+ * You can also register an callback, { ITaskObserver}, that will allow you
  * to receive callbacks during the calling of the {@link #onPreExecute()} and
  * {@link #onPostExecute(Object)} methods.
  *
@@ -78,7 +78,7 @@ public abstract class Task<T> {
     private volatile boolean invoked = false; // to determine if task was already run
     private volatile boolean running = false; // to determine when new thread is running
     private Executor executor = new SingleExecutor();
-    private ITaskObserver observer;
+    private ITaskCallback callback;
 
 
     public Task() {
@@ -121,8 +121,8 @@ public abstract class Task<T> {
      * Called on main thread right before {@link #doInBackground()} is called.
      */
     protected void onPreExecute() {
-        if (observer != null) {
-            observer.onPreExecute();
+        if (callback != null) {
+            callback.onPreExecute();
         }
     }
 
@@ -131,8 +131,8 @@ public abstract class Task<T> {
      * @param data Generic type T
      */
     protected void onPostExecute(T data) {
-        if (observer != null) {
-            observer.onPostExecute(data);
+        if (callback != null) {
+            callback.onPostExecute(data);
         }
     }
 
@@ -159,8 +159,8 @@ public abstract class Task<T> {
         return futureTask;
     }
 
-    public void setObserver(ITaskObserver observer) {
-        this.observer = observer;
+    public void setCallback(ITaskCallback callback) {
+        this.callback = callback;
     }
 
     public void setExecutor(Executor executor) {

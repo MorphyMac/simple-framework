@@ -7,7 +7,7 @@ import java.util.concurrent.ThreadFactory;
  *
  * A utility that spawns new threads for us.
  */
-public class LocalThreadFactory implements ThreadFactory {
+public final class LocalThreadFactory implements ThreadFactory {
     private volatile int count = 0;
 
 

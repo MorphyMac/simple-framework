@@ -6,7 +6,7 @@ package com.tylersuehr.concurrent;
  *
  * Defines methods for task callbacks.
  */
-public interface ITaskObserver {
+public interface ITaskCallback {
     void onPreExecute();
     void onPostExecute(Object data);
 }

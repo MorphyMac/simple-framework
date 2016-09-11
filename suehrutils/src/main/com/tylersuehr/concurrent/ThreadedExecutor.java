@@ -1,28 +1,26 @@
 package com.tylersuehr.concurrent;
 import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
 
 /**
  * Copyright Tyler Suehr 2016
  * Created by tyler
  */
-public abstract class ThreadedExecutor implements IExecutor {
-    final ArrayDeque<Runnable> queue = new ArrayDeque<>();
+public abstract class ThreadedExecutor implements Executor {
+    final ArrayDeque<Runnable> tasks = new ArrayDeque<>();
     final ThreadFactory threadFactory = new LocalThreadFactory();
 
 
-    @Override
-    public void execute() {
-        execute(null);
-    }
+    public ThreadedExecutor() {}
 
     /**
      * Adds a runnable to the queue.
      * @param r {@link Runnable}
      */
     public synchronized void add(Runnable r) {
-        this.queue.offer(r);
+        this.tasks.offer(r);
     }
 
     /**
@@ -31,7 +29,15 @@ public abstract class ThreadedExecutor implements IExecutor {
      */
     public synchronized void addAll(Collection<Runnable> rs) {
         for (Runnable r : rs) {
-            this.queue.offer(r);
+            this.tasks.offer(r);
         }
+    }
+
+    /**
+     * Gets the number of runnables in the queue.
+     * @return Number of runnables
+     */
+    public synchronized int getPendingTasks() {
+        return tasks.size();
     }
 }

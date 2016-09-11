@@ -9,6 +9,6 @@ public class SingleExecutorTest {
     @Test
     public void testExecute() {
         SingleExecutor executor = new SingleExecutor();
-        executor.execute(new TestRunnable("Finished!"));
+        executor.execute(new TestRunnable("Test run"));
     }
 }
