@@ -19,13 +19,13 @@ import java.util.concurrent.FutureTask;
  *
  * The mechanism that allows us to run/spawn new threads is {@link Executor}. We have
  * created a few executors that function differently accordingly:
- *      1. { SingleExecutor} spawns one new thread to run one single task
+ *      1. {@link SingleExecutor} spawns one new thread to run one single task
  *      1. { SerialExecutor} spawns one new thread and runs all tasks on it
  *      2. { ParallelExecutor} spawns a new thread to run each task in parallel
  *
  * The default executor used by this class is { SingleExecutor}.
  *
- * You can also register an callback, { ITaskObserver}, that will allow you
+ * You can also register an callback, {@link ITaskCallback}, that will allow you
  * to receive callbacks during the calling of the {@link #onPreExecute()} and
  * {@link #onPostExecute(Object)} methods.
  *

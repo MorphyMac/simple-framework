@@ -5,10 +5,10 @@ import org.junit.Test;
  * Copyright Tyler Suehr 2016
  * Created by tyler
  */
-public class ThreadedExecutorTest {
+public class QueueExecutorTest {
     @Test
     public void testAddRunnables() {
-        ThreadedExecutor executor = createExecutor();
+        QueueExecutor executor = createExecutor();
         executor.add(createRunnable());
         executor.add(createRunnable());
         executor.add(createRunnable());
@@ -16,8 +16,8 @@ public class ThreadedExecutorTest {
         assertTrue(executor.getPendingTasks() == 4);
     }
 
-    private ThreadedExecutor createExecutor() {
-        return new ThreadedExecutor() {
+    private QueueExecutor createExecutor() {
+        return new QueueExecutor() {
             @Override
             public void execute(Runnable command) {}
         };

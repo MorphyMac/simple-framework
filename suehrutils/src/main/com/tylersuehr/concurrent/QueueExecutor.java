@@ -8,12 +8,12 @@ import java.util.concurrent.ThreadFactory;
  * Copyright Tyler Suehr 2016
  * Created by tyler
  */
-public abstract class ThreadedExecutor implements Executor {
+public abstract class QueueExecutor implements Executor {
     final ArrayDeque<Runnable> tasks = new ArrayDeque<>();
     final ThreadFactory threadFactory = new LocalThreadFactory();
 
 
-    public ThreadedExecutor() {}
+    public QueueExecutor() {}
 
     /**
      * Adds a runnable to the queue.
