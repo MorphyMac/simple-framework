@@ -5,9 +5,16 @@ package com.tylersuehr.concurrent;
  * Created by tyler
  */
 class TestTask2 extends Task<Boolean> {
+    private int count;
+
+
+    public TestTask2(int count) {
+        this.count = count;
+    }
+
     @Override
     protected Boolean doInBackground() {
-        String tag = "Tag: ";
+        String tag = "Tag " + count + ": ";
         int count = 0;
         for (int i = 0; i < 10; i++) {
             count += i*2;
