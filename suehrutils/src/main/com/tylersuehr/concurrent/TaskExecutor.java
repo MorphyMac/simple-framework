@@ -44,10 +44,9 @@ public class TaskExecutor implements ITaskExecutor {
         }
     }
 
-    public void setCallback(ITaskCallback callback) {
-        this.callback = callback;
-    }
-
+    /**
+     * Gets the next task in queue and executes it if it's not null.
+     */
     private void executeNext() {
         if ((pending = tasks.poll()) != null) {
             if (callback != null) {
@@ -55,6 +54,10 @@ public class TaskExecutor implements ITaskExecutor {
             }
             execute(pending);
         }
+    }
+
+    public void setCallback(ITaskCallback callback) {
+        this.callback = callback;
     }
 
     /**
