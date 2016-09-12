@@ -19,6 +19,10 @@ public class TaskExecutor implements ITaskExecutor {
 
     public TaskExecutor() {}
 
+    public TaskExecutor(ITaskCallback callback) {
+        this.callback = callback;
+    }
+
     @Override
     public void execute() {
         execute(null);
