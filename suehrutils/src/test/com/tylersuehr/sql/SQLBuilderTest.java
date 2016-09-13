@@ -9,6 +9,27 @@ import java.util.UUID;
  */
 public class SQLBuilderTest {
     @Test
+    public void testQuery() {
+        // SELECT * FROM [table] WHERE [col] = value ORDER BY [col] LIMIT 0;
+        final String SQL = "SELECT * FROM [users] WHERE [name]='Tyler Suehr';";
+
+        String selection = "[name]='Tyler Suehr'";
+        String sql = new SQLBuilder().createQuery("users", selection, null, null);
+        assertEquals(SQL, sql);
+    }
+
+    @Test
+    public void testQueryCols() {
+        // SELECT (cols) FROM [table] WHERE [col] = value ORDER BY [col] LIMIT 0;
+        final String SQL = "SELECT ([name],[username]) FROM [users] WHERE [name]='Tyler Suehr';";
+
+        String[] cols = new String[] { "name", "username" };
+        String selection = "[name]='Tyler Suehr'";
+        String sql = new SQLBuilder().createQuery("users", cols, selection, null, null);
+        assertEquals(SQL, sql);
+    }
+
+    @Test
     public void testInsert() {
         // INSERT INTO [table] ([col1],[col2],[col3],[col4]) VALUES ('test', 'test2', 123, 12.123);
         final String ID = UUID.randomUUID().toString();

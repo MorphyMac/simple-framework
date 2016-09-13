@@ -5,6 +5,56 @@ package com.tylersuehr.sql;
  * Created by tyler
  */
 final class SQLBuilder {
+    // SELECT * FROM [table] WHERE [col1] = value ORDER BY [col] LIMIT 0;
+    String createQuery(String table, String selection, String order, String limit) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT * FROM ").append("[").append(table).append("]");
+
+        String temp = (selection != null ? " WHERE " + selection : "");
+        sb.append(temp);
+
+        temp = (order != null ? " ORDER BY " + order : "");
+        sb.append(temp);
+
+        temp = (limit != null ? " LIMIT " + limit : "");
+        sb.append(temp);
+
+        sb.append(";");
+        return sb.toString();
+    }
+
+    // SELECT ([col1],[col2],[col3]) FROM [table] WHERE [col] = value ORDER BY [col] LIMIT 0;
+    String createQuery(String table, String[] cols, String selection, String order, String limit) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT ");
+
+        if (cols != null) {
+            sb.append("(");
+            int i = 0;
+            for (String c : cols) {
+                sb.append((i > 0) ? "," : "");
+                sb.append("[").append(c).append("]");
+                i++;
+            }
+            sb.append(") FROM ");
+        } else {
+            sb.append("* FROM ");
+        }
+        sb.append("[").append(table).append("]");
+
+        String temp = (selection != null ? " WHERE " + selection : "");
+        sb.append(temp);
+
+        temp = (order != null ? " ORDER BY " + order : "");
+        sb.append(temp);
+
+        temp = (limit != null ? " LIMIT " + limit : "");
+        sb.append(temp);
+
+        sb.append(";");
+        return sb.toString();
+    }
+
     // INSERT INTO [table] ([col1],[col2],[col3],[col4]) VALUES ('test', 'test2', 123, 12.123);
     String createInsert(String table, ContentValues values) {
         StringBuilder sb = new StringBuilder();
