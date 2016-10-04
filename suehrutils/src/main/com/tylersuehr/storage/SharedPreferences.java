@@ -10,7 +10,7 @@ import java.io.*;
  * Copyright Tyler Suehr 2016
  * Created by tyler
  *
- * This utility allows us to store persistent data in a
+ * This utility allows us to store persistent com.tylersuehr.data in a
  * key-value pair (JSON) and store it locally on the disk.
  */
 final class SharedPreferences implements ISharedPreferences {
@@ -86,7 +86,7 @@ final class SharedPreferences implements ISharedPreferences {
                 synchronized (LOCK) {
                     String data = json.toJSONString();
 
-                    // Check if we should encrypt the data
+                    // Check if we should encrypt the com.tylersuehr.data
                     if (crypt != null) {
                         data = crypt.encrypt(data);
                     }
@@ -128,7 +128,7 @@ final class SharedPreferences implements ISharedPreferences {
                 // Parse the file contents into a JSON object
                 String strJson = sb.toString();
                 if (strJson.length() > 0) {
-                    // Check if we should decrypt the data
+                    // Check if we should decrypt the com.tylersuehr.data
                     if (crypt != null) {
                         strJson = crypt.decrypt(strJson);
                     }
@@ -163,7 +163,7 @@ final class SharedPreferences implements ISharedPreferences {
     }
 
 
-    // This allows us to add data without corrupting the file if some exception or
+    // This allows us to add com.tylersuehr.data without corrupting the file if some exception or
     // error is thrown. Apply() will run on a new thread.
     private class Editor implements IEditor {
         private JSONObject clone;

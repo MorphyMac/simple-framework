@@ -11,7 +11,7 @@ import java.util.Set;
  * This wraps a {@link HashMap} map.
  *
  * We need to explicitly define the 'set' methods instead of using the map
- * directly because we only want to store certain data types in the SQLite database:
+ * directly because we only want to store certain com.tylersuehr.data types in the SQLite database:
  *      - String, int, long, float, double, and boolean
  */
 public final class ContentValues {

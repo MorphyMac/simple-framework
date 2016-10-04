@@ -42,12 +42,12 @@ public final class SQLiteDatabase extends SQLiteCloseable {
     }
 
     /**
-     * Query data from the database.
+     * Query com.tylersuehr.data from the database.
      * @param table Name of the table
      * @param selection Where clause Ex: "[id]=12"
      * @param order Order by clause Ex: "[timestamp] ASC"
      * @param limit Limit clause Ex: "3"
-     * @return {@link ResultSet} with data
+     * @return {@link ResultSet} with com.tylersuehr.data
      */
     public ResultSet query(String table, String selection, String order, String limit) {
         acquireReference();
@@ -96,7 +96,7 @@ public final class SQLiteDatabase extends SQLiteCloseable {
     }
 
     /**
-     * Insert data into the database using the {@link ContentValues} hash map
+     * Insert com.tylersuehr.data into the database using the {@link ContentValues} hash map
      * implementation.
      * @param table Table name
      * @param values Values
@@ -115,7 +115,7 @@ public final class SQLiteDatabase extends SQLiteCloseable {
     }
 
     /**
-     * Updates existing data in the database using the {@link ContentValues} hash map
+     * Updates existing com.tylersuehr.data in the database using the {@link ContentValues} hash map
      * implementation.
      * @param table Table name
      * @param values Values

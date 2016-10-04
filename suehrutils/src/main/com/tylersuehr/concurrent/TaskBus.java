@@ -9,7 +9,7 @@ import java.util.Vector;
  * This will allow us to execute tasks very easily an affords us the wonderful Observer pattern.
  *
  * We can register/unregister observers as we please and execute any task, array of tasks, or
- * collection tasks and receive called backs with the data.
+ * collection tasks and receive called backs with the com.tylersuehr.data.
  */
 public final class TaskBus {
     private static final Vector<IObserver> OBSERVERS = new Vector<>();

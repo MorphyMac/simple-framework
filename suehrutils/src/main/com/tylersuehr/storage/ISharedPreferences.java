@@ -57,7 +57,7 @@ public interface ISharedPreferences {
 
     /**
      * Gets an instance of the {@link IEditor} to allow
-     * changes in data.
+     * changes in com.tylersuehr.data.
      * @return {@link IEditor} instance
      */
     IEditor edit();
