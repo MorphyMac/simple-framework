@@ -1,30 +1,30 @@
 package com.tylersuehr.concurrent;
 import com.tylersuehr.Log;
+import java.util.Vector;
 import java.util.concurrent.*;
 
 /**
  * Copyright Tyler Suehr 2016
  * Created by tyler
  *
- * This is to simplify the multi-threading. A task can run work in the background and
- * when complete, run on the main thread afterwards.
+ * This is to simplify multi-threading. A task can run work in the background and
+ * when complete, run on the main thread afterwards. The mechanism that allows us to
+ * run/spawn new threads is a fixed thread pool.
  *
  * This object will call the following methods accordingly:
  *      1. {@link #onPreExecute()} main thread
- *      2. {@link #doInBackground()} new thread
+ *      2. {@link #doInBackground()} worker thread
  *      3. {@link #onPostExecute(Object)} main thread
  *
- * The mechanism that allows us to run/spawn new threads is {@link Executor}. We have
- * created a few executors that function differently accordingly:
- *      1. {@link SingleExecutor} spawns one new thread to run one single task
- *      1. { SerialExecutor} spawns one new thread and runs all tasks on it
- *      2. { ParallelExecutor} spawns a new thread to run each task in parallel
  *
- * The default executor used by this class is { SingleExecutor}.
+ * You can register observers to the {@link Task} class to always be updated when
+ * the a task completes. Observers are static so when the task completes, it doesn't
+ * reset the observer. NOTE: You will need to manually remove observers.
  *
- * You can also register an callback, {@link ITaskCallback}, that will allow you
- * to receive callbacks during the calling of the {@link #onPreExecute()} and
+ * You can also register an callback to listener for execution states. {@link OnTaskStateListener}
+ * will allow you to receive callbacks during the calling of the {@link #onPreExecute()} and
  * {@link #onPostExecute(Object)} methods.
+ *
  *
  * Here is a simple example implementation of this object:
  * --------------------------------------------------------------
@@ -50,37 +50,21 @@ import java.util.concurrent.*;
  *     FindUsersTask task = new FindUsersTask();
  *     task.execute();
  * }
- * ----------------------------------------------------------------
- *
- *
- * Here is another example using the ability of an executor itself:
- * -----------------------------------------------------------------
- * public void main(String[] args) {
- *      Collection<Task> tasks = new ArrayList<>();
- *      tasks.add(new GetFeedTask());
- *      tasks.add(new GetTweetsTask());
- *      tasks.add(new GetReTweetsTask());
- *
- *      ParallelExecutor executor = new ParallelExecutor();
- *      for (Task task : tasks) {
- *          executor.add(task.getRunnableTask());
- *      }
- *      executor.execute();
- * }
  * -----------------------------------------------------------------
  */
 public abstract class Task<T> {
-    private final static ExecutorService executor = Executors.newFixedThreadPool(2);
-    private final Callable<T> workerTask;
-    private final FutureTask<T> futureTask;
+    private final static ExecutorService executor = Executors.newFixedThreadPool(2); // thread pool
+    private final static Vector<IObserver> observers = new Vector<>(); // stores our observers
+
+    private final FutureTask<T> futureTask; // main task to run
     private volatile boolean invoked = false; // to determine if task was already run
     private volatile boolean running = false; // to determine when new thread is running
-    private ITaskCallback callback;
+    private OnTaskStateListener stateListener;
 
 
     public Task() {
-        // Create the task that will run in new thread
-        workerTask = new Callable<T>() {
+        // Create the task that will run in worker thread
+        final Callable<T> workerTask = new Callable<T>() {
             @Override
             public T call() throws Exception {
                 // Make sure we know task is running
@@ -118,8 +102,8 @@ public abstract class Task<T> {
      * Called on main thread right before {@link #doInBackground()} is called.
      */
     protected void onPreExecute() {
-        if (callback != null) {
-            callback.onPreExecute();
+        if (stateListener != null) {
+            stateListener.onPreExecute();
         }
     }
 
@@ -128,9 +112,10 @@ public abstract class Task<T> {
      * @param data Generic type T
      */
     protected void onPostExecute(T data) {
-        if (callback != null) {
-            callback.onPostExecute(data);
+        if (stateListener != null) {
+            stateListener.onPostExecute();
         }
+        notifyObservers(data);
     }
 
     /**
@@ -145,19 +130,8 @@ public abstract class Task<T> {
         executor.execute(futureTask);
     }
 
-    /**
-     * Gets the runnable task itself.
-     * NOTE: Assumes you are using this to execute task, so we
-     *       set the {@link #invoked} value to true.
-     * @return {@link FutureTask<T>}
-     */
-    public FutureTask<T> getRunnableTask() {
-        invoked = true;
-        return futureTask;
-    }
-
-    public void setCallback(ITaskCallback callback) {
-        this.callback = callback;
+    public void setStateListener(OnTaskStateListener callback) {
+        this.stateListener = callback;
     }
 
     public boolean isInvoked() {
@@ -174,5 +148,45 @@ public abstract class Task<T> {
 
     public void cancel(boolean interrupt) {
         futureTask.cancel(interrupt);
+    }
+
+    /**
+     * Alert all observers that the data has been updated.
+     * @param data Data
+     */
+    private void notifyObservers(T data) {
+        final Object[] obs;
+
+        synchronized (this) {
+            obs = observers.toArray();
+        }
+
+        for (int i = observers.size() - 1; i >= 0; i--) {
+            ((IObserver)obs[i]).onUpdate(data);
+        }
+    }
+
+
+    /**
+     * Register an observer to our vector.
+     * @param observer {@link IObserver}
+     */
+    public static void register(IObserver observer) {
+        observers.addElement(observer);
+    }
+
+    /**
+     * Unregister an observer from our vector.
+     * @param observer {@link IObserver}
+     */
+    public static void unregister(IObserver observer) {
+        observers.removeElement(observer);
+    }
+
+    /**
+     * Unregister any observers in our vector.
+     */
+    public static void unregisterAll() {
+        observers.removeAllElements();
     }
 }

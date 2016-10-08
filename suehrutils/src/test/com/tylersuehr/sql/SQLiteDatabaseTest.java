@@ -1,10 +1,12 @@
 package com.tylersuehr.sql;
 import static org.junit.Assert.*;
-import com.tylersuehr.concurrent.LocalThreadFactory;
+
 import org.junit.Test;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 /**
@@ -17,8 +19,7 @@ public class SQLiteDatabaseTest {
 
     @Test
     public void testSQLiteConcurrency() {
-        ThreadFactory threadFactory = new LocalThreadFactory();
-        threadFactory.newThread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 SQLiteDatabase db2 = new SQLiteDatabase(DB_TEST_NAME);

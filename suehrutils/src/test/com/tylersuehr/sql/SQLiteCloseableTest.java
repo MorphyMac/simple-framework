@@ -1,7 +1,6 @@
 package com.tylersuehr.sql;
 import static org.junit.Assert.*;
 import com.tylersuehr.Log;
-import com.tylersuehr.concurrent.LocalThreadFactory;
 import org.junit.Test;
 import java.util.concurrent.ThreadFactory;
 
@@ -26,9 +25,8 @@ public class SQLiteCloseableTest {
 
     @Test
     public void testReferencesThreaded() throws InterruptedException {
-        final ThreadFactory threadFactory = new LocalThreadFactory();
         SQLiteCloseable closeable = create();
-        threadFactory.newThread(createRunnable(closeable)).start();
+        new Thread(createRunnable(closeable)).start();
 
         // Do 'work'
         Thread.sleep(800);
