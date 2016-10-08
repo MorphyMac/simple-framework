@@ -9,68 +9,68 @@ import org.junit.Test;
 public class FrameManagerTest {
     @Test
     public void testStartFrame() {
-        FrameManager manager = FrameManager.getInstance();
+        IFrameManager frameManager = FrameManager.getInstance();
 
-        AppFrame result = new AppFrame("Test", manager);
+        AppFrame frame = new AppFrame();
+        frameManager.startFrame(frame);
 
-        manager.startFrame(result);
-
-        Assert.assertTrue(manager.getFrameCount() > 0);
+        Assert.assertTrue(frameManager.getFrameCount() == 1);
     }
 
     @Test
-    public void testStopFrame() {
-        FrameManager manager = FrameManager.getInstance();
+    public void testFinishFrame() {
+        IFrameManager frameManager = FrameManager.getInstance();
 
-        AppFrame result = new AppFrame("Test", manager);
-        manager.startFrame(result);
+        AppFrame frame = new AppFrame();
+        AppFrame frame2 = new AppFrame();
+        AppFrame frame3 = new AppFrame();
+        frameManager.startFrame(frame);
+        frameManager.startFrame(frame2);
+        frameManager.startFrame(frame3);
 
-        Assert.assertTrue(manager.getFrameCount() > 0);
+        Assert.assertTrue(frameManager.getFrameCount() == 3);
+        frameManager.finish(frame2);
+        frameManager.finish(frame);
 
-        manager.finish(result);
-        Assert.assertTrue(manager.getFrameCount() <= 0);
+        Assert.assertTrue(frameManager.getFrameCount() == 1);
+        frameManager.finish(frame3);
+
+        Assert.assertTrue(frameManager.getFrameCount() == 0);
     }
 
     @Test
-    public void testClearBackStack() {
-        FrameManager manager = FrameManager.getInstance();
-        manager.startFrame(new AppFrame("test1", manager));
-        manager.startFrame(new AppFrame("test2", manager));
-        manager.startFrame(new AppFrame("test3", manager));
-        manager.startFrame(new AppFrame("test4", manager));
+    public void testClearStack() {
+        IFrameManager frameManager = FrameManager.getInstance();
 
-        Assert.assertTrue(manager.getFrameCount() == 4);
+        AppFrame frame = new AppFrame();
+        AppFrame frame2 = new AppFrame();
+        AppFrame frame3 = new AppFrame();
+        frameManager.startFrame(frame);
+        frameManager.startFrame(frame2);
+        frameManager.startFrame(frame3);
 
-        manager.clearBackStack(new AppFrame("test5", manager));
-        Assert.assertTrue(manager.getFrameCount() == 1);
+        Assert.assertTrue(frameManager.getFrameCount() == 3);
+
+        AppFrame frame4 = new AppFrame();
+        frameManager.clearStack(frame4);
+
+        Assert.assertTrue(frameManager.getFrameCount() == 1);
     }
 
     @Test
     public void testFindFrameByToken() {
-        FrameManager manager = FrameManager.getInstance();
+        IFrameManager frameManager = FrameManager.getInstance();
 
-        AppFrame result = new AppFrame("findTest", manager);
-        manager.startFrame(new AppFrame("test1", manager));
-        manager.startFrame(new AppFrame("test2", manager));
-        manager.startFrame(result);
-        manager.startFrame(new AppFrame("test3", manager));
-        manager.startFrame(new AppFrame("test4", manager));
+        AppFrame frame = new AppFrame();
+        AppFrame frame2 = new AppFrame();
+        AppFrame frame3 = new AppFrame();
+        frameManager.startFrame(frame);
+        frameManager.startFrame(frame2);
+        frameManager.startFrame(frame3);
 
-        AppFrame found = manager.findFrameByToken(result.getFrameToken());
-        Assert.assertEquals(result, found);
-    }
+        Assert.assertTrue(frameManager.getFrameCount() == 3);
 
-    @Test
-    public void testSavedInstanceState() {
-        FrameManager manager = FrameManager.getInstance();
-
-        AppFrame result = new AppFrame("test", manager);
-
-        Bundle bundle = new Bundle();
-        bundle.putBoolean("testBool", true);
-
-        result.saveInstance(bundle);
-
-        Assert.assertTrue(manager.savedInstanceState.getBoolean("testBool"));
+        AppFrame found = frameManager.findFrameByToken(frame2.getFrameToken());
+        Assert.assertEquals(found, frame2);
     }
 }

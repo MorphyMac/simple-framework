@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/(Java) IST 311 Tools.iml" filepath="$PROJECT_DIR$/(Java) IST 311 Tools.iml" />
       <module fileurl="file://$PROJECT_DIR$/suehrutils/suehrutils.iml" filepath="$PROJECT_DIR$/suehrutils/suehrutils.iml" />
     </modules>
   </component>

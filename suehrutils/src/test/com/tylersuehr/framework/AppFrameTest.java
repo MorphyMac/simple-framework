@@ -1,6 +1,7 @@
 package com.tylersuehr.framework;
 import org.junit.Assert;
 import org.junit.Test;
+import java.util.UUID;
 
 /**
  * Copyright Tyler Suehr 2016
@@ -9,21 +10,34 @@ import org.junit.Test;
 public class AppFrameTest {
     @Test
     public void testFrameToken() {
-        FrameManager manager = FrameManager.getInstance();
+        UUID token = UUID.randomUUID();
 
-        AppFrame result = new AppFrame("Test", manager);
-        manager.startFrame(result);
+        AppFrame result = new AppFrame();
+        result.setFrameToken(token);
 
-        Assert.assertNotNull(result.getFrameToken());
+        Assert.assertTrue(token == result.getFrameToken());
     }
 
     @Test
     public void testFrameManager() {
-        FrameManager manager = FrameManager.getInstance();
+        IFrameManager manager = FrameManager.getInstance();
 
-        AppFrame result = new AppFrame("Test", manager);
+        AppFrame result = new AppFrame();
+        result.setFrameManager(manager);
+
+        Assert.assertTrue(manager == result.getFrameManager());
+    }
+
+    @Test
+    public void testFinish() {
+        IFrameManager manager = FrameManager.getInstance();
+
+        AppFrame result = new AppFrame();
+        AppFrame test = new AppFrame();
+        manager.startFrame(test);
         manager.startFrame(result);
 
-        Assert.assertNotNull(result.getFrameManager());
+        test.finish();
+        Assert.assertTrue(manager.getFrameCount() == 1);
     }
 }

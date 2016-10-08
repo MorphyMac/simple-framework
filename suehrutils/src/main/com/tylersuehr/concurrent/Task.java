@@ -1,9 +1,6 @@
 package com.tylersuehr.concurrent;
 import com.tylersuehr.Log;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
 
 /**
  * Copyright Tyler Suehr 2016
@@ -73,11 +70,11 @@ import java.util.concurrent.FutureTask;
  * -----------------------------------------------------------------
  */
 public abstract class Task<T> {
+    private final static ExecutorService executor = Executors.newFixedThreadPool(2);
     private final Callable<T> workerTask;
     private final FutureTask<T> futureTask;
     private volatile boolean invoked = false; // to determine if task was already run
     private volatile boolean running = false; // to determine when new thread is running
-    private Executor executor = new SingleExecutor();
     private ITaskCallback callback;
 
 
@@ -161,10 +158,6 @@ public abstract class Task<T> {
 
     public void setCallback(ITaskCallback callback) {
         this.callback = callback;
-    }
-
-    public void setExecutor(Executor executor) {
-        this.executor = executor;
     }
 
     public boolean isInvoked() {

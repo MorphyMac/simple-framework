@@ -10,9 +10,7 @@ public interface IFrameManager {
 
     void startFrame(AppFrame frame);
     void finish(AppFrame frame);
-    void clearBackStack(AppFrame frame);
-    void saveInstance(Bundle savedInstanceState);
-
+    void clearStack(AppFrame frame);
     AppFrame findFrameByToken(UUID token);
     int getFrameCount();
 }

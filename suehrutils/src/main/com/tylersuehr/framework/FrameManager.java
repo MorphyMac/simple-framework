@@ -9,9 +9,9 @@ import java.util.UUID;
  * Created by tyler
  */
 public final class FrameManager implements IFrameManager {
+    private static final String TAG = "FRAME MANAGER";
     private static volatile FrameManager instance;
     private Stack<Pair<UUID, AppFrame>> backStack = new Stack<>();
-    Bundle savedInstanceState = null;
 
 
     private FrameManager() {}
@@ -22,62 +22,66 @@ public final class FrameManager implements IFrameManager {
         return instance;
     }
 
-    /**
-     * Shows the given frame and adds it to the stack of frames.
-     * @param frame {@link AppFrame}
-     */
     @Override
     public void startFrame(AppFrame frame) {
-        // Show frame, generate a token, and add it to stack
-        frame.frameToken = UUID.randomUUID();
-        frame.showFrame(savedInstanceState);
-        this.backStack.push(new Pair<>(frame.frameToken, frame));
+        // Create unique token for frame
+        UUID token = UUID.randomUUID();
 
-        Log.i(TAG, "Started new frame. Frames open: " + backStack.size());
+        // Set imperative frame data and show it
+        frame.setFrameManager(this);
+        frame.setFrameToken(token);
+        frame.showFrame();
+
+        // Put the frame into the backstack
+        backStack.push(new Pair<>(token, frame));
+
+        Log.i(TAG, "Frame started: " + token + " Frames Open: " + backStack.size());
     }
 
-    /**
-     * Hides the given frame and removes it from the stack.
-     * @param frame The frame
-     */
     @Override
     public void finish(AppFrame frame) {
-        Pair<UUID, AppFrame> result = new Pair<>(frame.frameToken, frame);
+        // Get the pair using the frame token and frame
+        Pair<UUID, AppFrame> result = new Pair<>(frame.getFrameToken(), frame);
 
+        // Search for that pair in the back stack
         int position = backStack.search(result);
-        if (position == -1)
+        if (position == -1) {
             throw new RuntimeException("Frame already finished!");
+        }
 
+        // Close the frame and remove it from the back stack
         frame.setVisible(false);
+        frame.setFrameToken(null);
+        frame.setFrameManager(null);
+        frame.dispose();
         backStack.removeElement(result);
+        checkExit();
 
-        checkForExit();
-
-        Log.i(TAG, "Frame finished. Frames open: " + backStack.size());
+        Log.i(TAG, "Frame finished: " + frame.getFrameToken() + " Frames Open: " + backStack.size());
     }
 
-    /**
-     * Clears the back stack of frames and starts the given frame.
-     * @param frame {@link AppFrame}
-     */
     @Override
-    public void clearBackStack(AppFrame frame) {
+    public void clearStack(AppFrame frame) {
         // Remove all frames from back stack
         while (!backStack.empty()) {
             AppFrame old = backStack.pop().getValue();
             old.setVisible(false);
+            old.setFrameToken(null);
+            old.setFrameManager(null);
+            old.dispose();
         }
 
         // Start the new frame
-        frame.frameToken = UUID.randomUUID();
-        frame.showFrame(savedInstanceState);
-        this.backStack.push(new Pair<>(frame.frameToken, frame));
+        UUID token = UUID.randomUUID();
+        frame.setFrameToken(token);
+        frame.showFrame();
+        this.backStack.push(new Pair<>(token, frame));
 
-        Log.i(TAG, "Stack cleared. Frames open: " + backStack.size());
+        Log.i(TAG, "Stack cleared. Frames Open: " + backStack.size());
     }
 
     @Override
-    public AppFrame findFrameByToken(UUID frameToken) {
+    public AppFrame findFrameByToken(UUID token) {
         Object[] args;
 
         synchronized (this) {
@@ -85,12 +89,11 @@ public final class FrameManager implements IFrameManager {
         }
 
         for (int i = args.length - 1; i >= 0; i--) {
-            Pair<UUID, AppFrame> result = ((Pair<UUID, AppFrame>)args[i]);
-            if (result.getKey() == frameToken) {
+            Pair<UUID, AppFrame> result = (Pair<UUID, AppFrame>)args[i];
+            if (result.getKey() == token) {
                 return result.getValue();
             }
         }
-
         return null;
     }
 
@@ -99,12 +102,7 @@ public final class FrameManager implements IFrameManager {
         return backStack.size();
     }
 
-    @Override
-    public void saveInstance(Bundle savedInstanceState) {
-        this.savedInstanceState = savedInstanceState;
-    }
-
-    private void checkForExit() {
+    private void checkExit() {
         if (backStack.size() <= 0) {
             System.exit(0);
         }
