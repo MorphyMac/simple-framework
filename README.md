@@ -32,5 +32,6 @@ This library includes useful tools for the IST 311 course at Penn State Universi
     * `SharedPreferences`
     * `PreferenceManager`
 
-* `Log`
-* `TextUtils`
+* ###default package
+    * `Log`
+    * `TextUtils`
