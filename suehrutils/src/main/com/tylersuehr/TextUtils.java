@@ -10,7 +10,8 @@ public final class TextUtils {
         return (text == null || text.length() <= 0);
     }
 
-    public static String createPass(char[] password) {
-        return Arrays.toString(password).replace("[", "").replace("]", "").replace(", ", "");
+    public static String toPassword(char[] password) {
+        return Arrays.toString(password).replace("[", "")
+                .replace("]", "").replace(", ", "");
     }
 }

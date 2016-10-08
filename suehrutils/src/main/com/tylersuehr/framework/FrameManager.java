@@ -7,6 +7,9 @@ import java.util.UUID;
 /**
  * Copyright Tyler Suehr 2016
  * Created by tyler
+ *
+ * This is the concrete implementation of {@link IFrameManager}. Uses
+ * Stack to store/manage frames.
  */
 public final class FrameManager implements IFrameManager {
     private static final String TAG = "FRAME MANAGER";

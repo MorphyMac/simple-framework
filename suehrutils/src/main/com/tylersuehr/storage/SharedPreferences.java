@@ -218,12 +218,7 @@ final class SharedPreferences implements ISharedPreferences {
         @Override
         public void apply() {
             json = new JSONObject(clone);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    saveJsonToFile();
-                }
-            }).start();
+            new Thread(SharedPreferences.this::saveJsonToFile).start();
         }
     }
 }

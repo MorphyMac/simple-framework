@@ -64,15 +64,12 @@ public abstract class Task<T> {
 
     public Task() {
         // Create the task that will run in worker thread
-        final Callable<T> workerTask = new Callable<T>() {
-            @Override
-            public T call() throws Exception {
-                // Make sure we know task is running
-                running = true;
+        final Callable<T> workerTask = () -> {
+            // Make sure we know task is running
+            running = true;
 
-                // Run task
-                return doInBackground();
-            }
+            // Run task
+            return doInBackground();
         };
 
         // Create the task that will run when worker finishes
